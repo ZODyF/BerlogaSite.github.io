@@ -130,11 +130,11 @@ export function AdminPage() {
                 value={newWaiterName}
                 onChange={(e) => setNewWaiterName(e.target.value)}
                 placeholder="Имя сотрудника"
-                className="flex-1 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex-1 min-w-0 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-1"
+                className="shrink-0 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" /> Добавить
               </button>
@@ -192,11 +192,11 @@ export function AdminPage() {
                     value={newPin}
                     onChange={(e) => setNewPin(e.target.value)}
                     placeholder="Новый PIN"
-                    className="flex-1 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-1 min-w-0 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+                    className="shrink-0 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
                   >
                     Сохранить
                   </button>
