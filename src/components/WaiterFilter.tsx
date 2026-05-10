@@ -1,5 +1,5 @@
 import { useAppStore } from "@/store/useAppStore";
-import { cn } from "@/lib/utils";
+import { cn, getWaiterBg } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
@@ -18,17 +18,10 @@ export function WaiterFilter() {
           "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border flex items-center gap-2 shadow-sm",
           selectedWaiterId === null 
             ? "bg-primary text-primary-foreground border-primary" 
-            : "bg-background border-primary text-foreground"
+            : cn(getWaiterBg(selectedWaiter?.color), "border-transparent")
         )}
       >
-        {selectedWaiter ? (
-          <>
-            <span className={cn("w-2 h-2 rounded-full", selectedWaiter.color)} />
-            {selectedWaiter.name}
-          </>
-        ) : (
-          "Все"
-        )}
+        {selectedWaiter ? selectedWaiter.name : "Все"}
         <ChevronDown className={cn("w-4 h-4 ml-1 transition-transform", isExpanded && "rotate-180")} />
       </button>
 
@@ -50,13 +43,11 @@ export function WaiterFilter() {
                       setSelectedWaiterId(isSelected ? null : waiter.id);
                     }}
                     className={cn(
-                      "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border flex items-center gap-2",
-                      isSelected
-                        ? "border-primary bg-background shadow-sm"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-transparent"
+                      "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
+                      isSelected ? "ring-2 ring-primary shadow-sm" : "border-transparent opacity-90 hover:opacity-100",
+                      getWaiterBg(waiter.color)
                     )}
                   >
-                    <span className={cn("w-2 h-2 rounded-full", waiter.color)} />
                     {waiter.name}
                   </button>
                 );

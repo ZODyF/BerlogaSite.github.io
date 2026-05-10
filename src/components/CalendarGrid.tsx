@@ -3,7 +3,7 @@ import { ru } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { cn } from "@/lib/utils";
+import { cn, getWaiterBg } from "@/lib/utils";
 import { ShiftModal } from "./ShiftModal";
 
 export function CalendarGrid() {
@@ -123,11 +123,11 @@ export function CalendarGrid() {
                     <div
                       key={shift.id}
                       className={cn(
-                        "text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded flex items-center gap-1.5 shrink-0 border transition-all duration-200 overflow-hidden",
-                        isHighlighted ? "border-primary bg-background shadow-sm z-10" : "bg-secondary border-transparent"
+                        "text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded flex items-center shrink-0 border transition-all duration-200 overflow-hidden",
+                        isHighlighted ? "ring-2 ring-primary z-10" : "border-transparent",
+                        getWaiterBg(waiter.color)
                       )}
                     >
-                      <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", waiter.color)} />
                       <span className="leading-none overflow-hidden whitespace-nowrap text-clip py-0.5">{waiter.name}</span>
                     </div>
                   );

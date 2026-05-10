@@ -4,7 +4,7 @@ import { X, UserPlus, Trash2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, getWaiterBg } from "@/lib/utils";
 
 interface ShiftModalProps {
   date: Date;
@@ -95,15 +95,17 @@ export function ShiftModal({ date, onClose }: ShiftModalProps) {
                   return (
                     <div
                       key={shift.id}
-                      className="flex items-center justify-between p-3 bg-secondary rounded-lg"
+                      className={cn(
+                        "flex items-center justify-between p-3 rounded-lg border border-transparent",
+                        getWaiterBg(waiter.color)
+                      )}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={cn("w-3 h-3 rounded-full", waiter.color)} />
                         <span className="font-medium">{waiter.name}</span>
                       </div>
                       <button
                         onClick={() => removeShift(shift.id)}
-                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                        className="p-2 opacity-60 hover:opacity-100 text-destructive hover:bg-destructive/10 rounded-md transition-all"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

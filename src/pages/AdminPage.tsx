@@ -4,12 +4,14 @@ import { Lock, Unlock, Users, CalendarDays, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { cn, WAITER_COLORS, getWaiterBg } from "@/lib/utils";
 
 export function AdminPage() {
   const { isAdmin, setAdmin, waiters, addWaiter, removeWaiter, adminPin, setAdminPin } = useAppStore();
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [newWaiterName, setNewWaiterName] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
   const [newPin, setNewPin] = useState("");
   const [pinMessage, setPinMessage] = useState("");
   const navigate = useNavigate();
@@ -31,15 +33,16 @@ export function AdminPage() {
     if (!newWaiterName.trim()) return;
 
     const nameToAdd = newWaiterName.trim();
+    const colorToAdd = selectedColor;
     setNewWaiterName(""); // Сразу очищаем поле для мгновенного отклика
+    setSelectedColor("");
 
-    const colors = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-pink-500"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const newWaiterData: { name: string; color?: string } = { name: nameToAdd };
+    if (colorToAdd) {
+      newWaiterData.color = colorToAdd;
+    }
 
-    await addWaiter({
-      name: nameToAdd,
-      color: randomColor,
-    });
+    await addWaiter(newWaiterData);
   };
 
   const handleChangePin = async (e: React.FormEvent) => {
@@ -124,32 +127,58 @@ export function AdminPage() {
               <Users className="w-5 h-5 text-muted-foreground" /> Сотрудники
             </h2>
             
-            <form onSubmit={handleAddWaiter} className="flex gap-2 mb-6">
-              <input
-                type="text"
-                value={newWaiterName}
-                onChange={(e) => setNewWaiterName(e.target.value)}
-                placeholder="Имя сотрудника"
-                className="flex-1 min-w-0 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <button
-                type="submit"
-                className="shrink-0 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-1"
-              >
-                <Plus className="w-4 h-4" /> Добавить
-              </button>
+            <form onSubmit={handleAddWaiter} className="flex flex-col gap-3 mb-6">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newWaiterName}
+                  onChange={(e) => setNewWaiterName(e.target.value)}
+                  placeholder="Имя сотрудника"
+                  className="flex-1 min-w-0 px-4 py-2 bg-background border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  className="shrink-0 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" /> Добавить
+                </button>
+              </div>
+              <div className="flex items-center gap-2 px-1 flex-wrap">
+                <span className="text-sm text-muted-foreground mr-2">Цвет:</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedColor("")}
+                  className={cn(
+                    "text-xs px-2 py-1 rounded-md border transition-colors",
+                    selectedColor === "" ? "border-primary bg-primary/10 text-primary" : "bg-secondary text-muted-foreground border-transparent"
+                  )}
+                >
+                  Без цвета
+                </button>
+                {WAITER_COLORS.map(c => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setSelectedColor(c)}
+                    className={cn(
+                      "w-6 h-6 rounded-md transition-transform border", 
+                      getWaiterBg(c),
+                      selectedColor === c ? "scale-110 ring-2 ring-primary ring-offset-2 ring-offset-card border-transparent" : "border-transparent hover:scale-105"
+                    )}
+                  />
+                ))}
+              </div>
             </form>
 
             <div className="space-y-2">
               {waiters.map((waiter) => (
-                <div key={waiter.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                <div key={waiter.id} className={cn("flex items-center justify-between p-3 rounded-lg border border-transparent", getWaiterBg(waiter.color))}>
                   <div className="flex items-center gap-3">
-                    <span className={`w-3 h-3 rounded-full ${waiter.color}`} />
                     <span className="font-medium">{waiter.name}</span>
                   </div>
                   <button
                     onClick={() => removeWaiter(waiter.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                    className="p-2 opacity-60 hover:opacity-100 hover:text-destructive hover:bg-destructive/10 rounded-md transition-all"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
