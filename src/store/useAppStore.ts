@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { collection, onSnapshot, addDoc, deleteDoc, doc, query } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, deleteDoc, doc, query, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export type Waiter = {
@@ -20,9 +20,11 @@ interface AppState {
   isAdmin: boolean
   theme: 'light' | 'dark'
   selectedWaiterId: string | null
+  adminPin: string
   
   // Actions
   setAdmin: (isAdmin: boolean) => void
+  setAdminPin: (pin: string) => Promise<void>
   toggleTheme: () => void
   setSelectedWaiterId: (id: string | null) => void
   
@@ -52,9 +54,18 @@ export const useAppStore = create<AppState>((set, get) => {
     isAdmin: false,
     theme: initialTheme,
     selectedWaiterId: null,
+    adminPin: '1234',
 
     setAdmin: (isAdmin) => set({ isAdmin }),
     
+    setAdminPin: async (pin) => {
+      try {
+        await setDoc(doc(db, 'settings', 'admin'), { pin });
+      } catch (error) {
+        console.error("Error setting pin:", error);
+      }
+    },
+
     toggleTheme: () => set((state) => {
       const newTheme = state.theme === 'light' ? 'dark' : 'light'
       localStorage.setItem('theme', newTheme)
@@ -73,6 +84,7 @@ export const useAppStore = create<AppState>((set, get) => {
     initFirebaseListeners: () => {
       const waitersQuery = query(collection(db, 'waiters'));
       const shiftsQuery = query(collection(db, 'shifts'));
+      const adminDocRef = doc(db, 'settings', 'admin');
 
       const unsubWaiters = onSnapshot(waitersQuery, (snapshot) => {
         const waitersData = snapshot.docs.map(doc => ({
@@ -90,10 +102,17 @@ export const useAppStore = create<AppState>((set, get) => {
         set({ shifts: shiftsData });
       });
 
-      // Return a function to unsubscribe from both listeners
+      const unsubAdmin = onSnapshot(adminDocRef, (docSnap) => {
+        if (docSnap.exists() && docSnap.data().pin) {
+          set({ adminPin: docSnap.data().pin });
+        }
+      });
+
+      // Return a function to unsubscribe from all listeners
       return () => {
         unsubWaiters();
         unsubShifts();
+        unsubAdmin();
       };
     },
 

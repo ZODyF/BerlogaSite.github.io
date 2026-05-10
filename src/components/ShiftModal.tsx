@@ -25,11 +25,15 @@ export function ShiftModal({ date, onClose }: ShiftModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+        onClick={onClose}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
+          onClick={(e) => e.stopPropagation()}
           className="w-full max-w-md bg-card border rounded-2xl shadow-lg overflow-hidden"
         >
           <div className="flex items-center justify-between p-4 border-b">

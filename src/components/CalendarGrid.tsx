@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { ShiftModal } from "./ShiftModal";
 
 export function CalendarGrid() {
@@ -94,14 +93,14 @@ export function CalendarGrid() {
                 }
               }}
               className={cn(
-                "min-h-[100px] md:min-h-[120px] p-2 border-r border-b relative transition-colors",
+                "h-[110px] md:h-[130px] flex flex-col p-1 md:p-2 border-r border-b relative transition-colors",
                 !isCurrentMonth && "bg-muted/10 text-muted-foreground",
                 isToday(day) && "bg-primary/5",
                 isDimmed && "opacity-30 grayscale transition-all duration-300",
                 isAdmin && isCurrentMonth && "hover:bg-accent/5 cursor-pointer" // Admin interaction hint
               )}
             >
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-1 md:mb-2 shrink-0">
                 <span
                   className={cn(
                     "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
@@ -113,7 +112,7 @@ export function CalendarGrid() {
               </div>
 
               {/* Shifts Display */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 overflow-y-auto flex-1 no-scrollbar">
                 {dayShifts.map((shift) => {
                   const waiter = waiters.find((w) => w.id === shift.waiterId);
                   if (!waiter) return null;
@@ -121,17 +120,16 @@ export function CalendarGrid() {
                   const isHighlighted = selectedWaiterId === waiter.id;
 
                   return (
-                    <motion.div
-                      layoutId={`shift-${shift.id}`}
+                    <div
                       key={shift.id}
                       className={cn(
-                        "text-xs px-2 py-1 rounded-md flex items-center gap-1.5 truncate",
-                        isHighlighted ? "ring-2 ring-primary bg-background shadow-sm" : "bg-secondary"
+                        "text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded flex items-center gap-1.5 shrink-0 border transition-all duration-200 overflow-hidden",
+                        isHighlighted ? "border-primary bg-background shadow-sm z-10" : "bg-secondary border-transparent"
                       )}
                     >
-                      <span className={cn("w-2 h-2 rounded-full shrink-0", waiter.color)} />
-                      <span className="truncate">{waiter.name}</span>
-                    </motion.div>
+                      <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", waiter.color)} />
+                      <span className="leading-none overflow-hidden whitespace-nowrap text-clip py-0.5">{waiter.name}</span>
+                    </div>
                   );
                 })}
               </div>
