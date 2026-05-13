@@ -121,6 +121,7 @@ export const useAppStore = create<AppState>((set, get) => {
         await addDoc(collection(db, 'waiters'), waiter);
       } catch (error) {
         console.error("Error adding waiter:", error);
+        alert("Ошибка сохранения в Firebase! Проверьте правила доступа (Security Rules).");
       }
     },
     
@@ -139,6 +140,7 @@ export const useAppStore = create<AppState>((set, get) => {
         }
       } catch (error) {
         console.error("Error removing waiter:", error);
+        alert("Ошибка удаления в Firebase!");
       }
     },
     
@@ -151,6 +153,7 @@ export const useAppStore = create<AppState>((set, get) => {
         await addDoc(collection(db, 'shifts'), shift);
       } catch (error) {
         console.error("Error adding shift:", error);
+        alert("Ошибка сохранения смены в Firebase!");
       }
     },
     
@@ -159,7 +162,11 @@ export const useAppStore = create<AppState>((set, get) => {
         await deleteDoc(doc(db, 'shifts', id));
       } catch (error) {
         console.error("Error removing shift:", error);
+        alert("Ошибка удаления смены в Firebase!");
       }
     },
   }
 })
+
+// Автоматически инициализируем слушатели Firebase при загрузке приложения
+useAppStore.getState().initFirebaseListeners();
