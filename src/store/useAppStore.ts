@@ -92,6 +92,9 @@ export const useAppStore = create<AppState>((set, get) => {
           ...doc.data()
         })) as Waiter[];
         set({ waiters: waitersData });
+      }, (error) => {
+        console.error("Ошибка Firebase при чтении официантов:", error);
+        alert("Нет доступа к Firebase (Waiters). Посмотрите консоль.");
       });
 
       const unsubShifts = onSnapshot(shiftsQuery, (snapshot) => {
@@ -100,12 +103,16 @@ export const useAppStore = create<AppState>((set, get) => {
           ...doc.data()
         })) as Shift[];
         set({ shifts: shiftsData });
+      }, (error) => {
+        console.error("Ошибка Firebase при чтении смен:", error);
       });
 
       const unsubAdmin = onSnapshot(adminDocRef, (docSnap) => {
         if (docSnap.exists() && docSnap.data().pin) {
           set({ adminPin: docSnap.data().pin });
         }
+      }, (error) => {
+        console.error("Ошибка Firebase при чтении админ-пина:", error);
       });
 
       // Return a function to unsubscribe from all listeners
